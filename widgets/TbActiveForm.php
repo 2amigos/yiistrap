@@ -27,6 +27,10 @@ class TbActiveForm extends CActiveForm
      * @var string the CSS class name for error messages.
      */
     public $errorMessageCssClass = 'error';
+    /**
+     * @var string the CSS class name for success messages.
+     */
+    public $successMessageCssClass = 'success';
 
     /**
      * Initializes the widget.
@@ -70,6 +74,8 @@ class TbActiveForm extends CActiveForm
             'model' => get_class($model),
             'name' => CHtml::resolveName($model, $attribute),
             'enableAjaxValidation' => $enableAjaxValidation,
+            'errorCssClass' => $this->errorMessageCssClass,
+            'successCssClass' => $this->successMessageCssClass,
             'inputContainer' => 'div.control-group', // Bootstrap requires this
         );
         $optionNames = array(
@@ -86,7 +92,7 @@ class TbActiveForm extends CActiveForm
         );
         foreach ($optionNames as $name)
         {
-            $option[$name] = TbHtml::getOption($name, $htmlOptions);
+            $option[$name] = TbHtml::getOption($name, $htmlOptions, (isset($option[$name]) ? $option[$name] : null));
             unset($htmlOptions[$name]);
         }
         if ($model instanceof CActiveRecord && !$model->isNewRecord)
@@ -380,9 +386,9 @@ class TbActiveForm extends CActiveForm
      * @return string the generated field.
      * @see TbHtml::activeUneditableField
      */
-    public function uneditableField($model, $attribute, $data, $htmlOptions = array())
+    public function uneditableField($model, $attribute, $htmlOptions = array())
     {
-        return TbHtml::activeUneditableField($model, $attribute, $data, $htmlOptions);
+        return TbHtml::activeUneditableField($model, $attribute, $htmlOptions);
     }
 
     /**
@@ -393,9 +399,9 @@ class TbActiveForm extends CActiveForm
      * @return string the generated input.
      * @see TbHtml::activeSearchField
      */
-    public function searchField($model, $attribute, $data, $htmlOptions = array())
+    public function searchField($model, $attribute, $htmlOptions = array())
     {
-        return TbHtml::activeSearchField($model, $attribute, $data, $htmlOptions);
+        return TbHtml::activeSearchField($model, $attribute, $htmlOptions);
     }
 
     /**
@@ -451,7 +457,7 @@ class TbActiveForm extends CActiveForm
     public function emailFieldControlGroup($model, $attribute, $htmlOptions = array())
     {
         $htmlOptions = $this->processRowOptions($model, $attribute, $htmlOptions);
-        return TbHtml::activeEmailFieldControlGroup($model, $attribute, null/* no data */, $htmlOptions);
+        return TbHtml::activeEmailFieldControlGroup($model, $attribute, $htmlOptions);
     }
 
     /**
@@ -678,6 +684,7 @@ class TbActiveForm extends CActiveForm
     protected function processRowOptions($model, $attribute, $options)
     {
         $errorOptions = TbHtml::popOption('errorOptions', $options, array());
+        $errorOptions = TbHtml::defaultOption('class', 'help-block', $errorOptions);
         $error = $this->error($model, $attribute, $errorOptions);
         if ($model->hasErrors($attribute))
         {
