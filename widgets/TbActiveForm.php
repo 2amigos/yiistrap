@@ -86,7 +86,9 @@ class TbActiveForm extends CActiveForm
         );
         foreach ($optionNames as $name)
         {
-            $option[$name] = TbHtml::getOption($name, $htmlOptions);
+            $option_val = TbHtml::getOption($name, $htmlOptions);
+            if($option_val !== null)
+                $option[$name] = $option_val;
             unset($htmlOptions[$name]);
         }
         if ($model instanceof CActiveRecord && !$model->isNewRecord)
